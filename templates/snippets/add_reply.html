@@ -1,0 +1,15 @@
+<!--comment xuất hiện trong list cmt từ độ mờ 0->1 trong thời gian 0.6s-->
+<fade-in class="opacity-0"
+ _="on load transition my opacity to 1 over 0.4s" >
+{% include 'aposts/reply.html' %}
+</fade-in>
+<form class="replyform flex justify-between" autocomplete="off"
+hx-post="{% url 'reply-send' comment.id %}"
+hx-target="this"
+hx-swap="outerHTML">
+    {% csrf_token %}
+    {{ replyform }}
+    <button class="block" type="submit">Submit</button>
+</form>
+<!--ap dung hx-swap-oob-->
+<span hx-swap-oob="true" id="repliescount-{{comment.id}}" class="font-light text-gray-500 ml-1">{{comment.replies.count}}</span>

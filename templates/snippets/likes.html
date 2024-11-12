@@ -1,0 +1,23 @@
+{% load static %}
+<div class="flex items-center gap-1">
+    <div class="flex items-center gap-1">
+        {% if user in post.likes.all  %}
+        <img class="w-10 -mt-1" src="{% static "app/images/timdo.png" %}">
+        {% else %}
+        <img class="w-10 -mt-1" src="{% static "app/images/tim.png" %}">
+        {% endif %}     
+        {{post.likes.count}}
+    </div>
+    {% if user.is_authenticated and post.author != user %}
+    <!--ta trien khai htmx o day-->
+        <a class="cursor-pointer" hx-get="{% url 'like-post' post.id %}"
+        hx-target="closest div"
+        hx-swap="innerHTML">
+            {% if user in post.likes.all %}
+            <b>Liked</b>
+            {% else %}
+            Like
+            {% endif %}
+        </a>
+    {% endif %}
+</div>

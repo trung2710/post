@@ -1,0 +1,26 @@
+{% extends "layouts/box.html" %}
+
+{% block content %}
+<h2>Yêu cầu tham gia nhóm: {{ chat_group.group_name }}</h2>
+
+{% if chat_group.join_requests.all %}
+    <ul>
+        {% for request in chat_group.join_requests.all %}
+            {% if request.status == 'pending' %}{% endif %}
+            <li>
+                {{ request.user.username }} muốn tham gia nhóm
+                <form method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="request_id" value="{{ request.request_name }}">
+                    <button type="submit" name="action" value="accept">Chấp nhận</button>
+                    <button type="submit" name="action" value="reject">Từ chối</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Hiện tại không có yêu cầu nào đang chờ xử lý.</p>
+{% endif %}
+
+<a href="{% url 'chatroom' chat_group.group_name %}">Quay lại phòng chat</a>
+{% endblock %}

@@ -1,0 +1,7 @@
+{% extends "layouts/box.html" %}
+
+{% block content %}
+<h2>{{ chat_group.group_name }}</h2>
+<p>{{ message }}</p>
+<a href="{% url 'chathome' %}">Quay lại trang chính</a>
+{% endblock %}

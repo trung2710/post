@@ -1,0 +1,22 @@
+{% extends "layouts/b.html" %}
+
+{% block content %}
+<h1>Edit Comment</h1>
+<div class="card p-4">
+    <div class="flex items-center mb-4">
+        <h3 class="text-lg font-bold">{{comment.body}}</h3>
+    </div>
+    <!--có enctype="multipart/form-data" mới gửi đc file ảnh, hoặc file data-->
+    <div class="pb-2">
+        <form method='POST' >
+            {% csrf_token %}
+            {{form}}
+            <div class="pt-4">
+                <button type="submit">Submit</button>
+                <a class="button secondaryAction ml-1" href="{{request.META.HTTP_REFERER}}">Go Back</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}
+
