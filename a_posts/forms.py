@@ -5,7 +5,7 @@ class PostCreateForm(ModelForm):
     class Meta:
         model=Post
         #fields: là các trường mà form sẽ xử lí(nếu cần tất cả các trường thì fields="__all__")
-        fields=['title','image','file','video','audio','body', 'tags']
+        fields=['title','file','body', 'tags']
         #labels: Cung cấp nhãn hiển thị cho trường body (đặt tên là "Caption").
         labels={ 
             'body': 'Caption',
@@ -16,10 +16,7 @@ class PostCreateForm(ModelForm):
           và cấu hình cho các trường nhập liệu (Textarea cho body và TextInput cho url).'''
         widgets={
             'title' : forms.TextInput(attrs={'row' :1, 'placeholder':'Add a title...', 'class':'front2 text-5m'}) ,
-            'image': forms.FileInput(),
             'file': forms.FileInput(),
-            'video':forms.FileInput(),
-            'audio':forms.FileInput(),
             'body': forms.Textarea(attrs={'rows':3, 'placeholder':'Add a caption...', 'class':'front1 text-3xl'}), 
             'tags': forms.CheckboxSelectMultiple(),
         }
@@ -29,17 +26,14 @@ class PostEditForm(ModelForm):
     remove_image = forms.BooleanField(required=False, label='Remove image', initial=False)
     class Meta:
         model=Post
-        fields=['title','image','file','video','audio','body', 'tags']
+        fields=['title','file','body', 'tags']
         labels={
             'body':'Caption',
             'tags': 'catelory',
         }
         widgets={
             'title' : forms.TextInput(attrs={'row' :1, 'placeholder':'Add a title...', 'class':'front2 text-5m'}) ,
-            'image': forms.FileInput(),
             'file': forms.FileInput(),
-            'video':forms.FileInput(),
-            'audio':forms.FileInput(),
             'body': forms.Textarea(attrs={'rows':3, 'placeholder':'Add a caption...', 'class':'front1 text-3xl'}),
             'tags': forms.CheckboxSelectMultiple(),
         }

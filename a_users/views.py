@@ -26,6 +26,8 @@ def profile_edit(request):
         #instance cho biết ProfileForm đang làm việc với một bản ghi hiện có,thay vì tạo mới 1 bản ghi.
         form=ProfileForm(request.POST, request.FILES , instance=request.user.profile)
         if form.is_valid():
+            if form.cleaned_data['remove_image']:
+                request.user.profile.image = None  # Gỡ ảnh khỏi bài đăng
             form.save()
             return redirect('profile')
     if request.path == reverse('profile-onboarding'):

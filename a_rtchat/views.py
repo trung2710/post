@@ -215,7 +215,9 @@ def review_join_requests(request, chatroom_name):
     if request.user != chat_group.admin:
         raise Http404("Bạn không có quyền quản lý nhóm này.")
 
+    
     join_requests = chat_group.join_requests.filter(status="pending")
+
     context = {
         'join_requests': join_requests,
         'chat_group': chat_group,
@@ -230,14 +232,15 @@ def handle_join_request(request, request_id, action):
     if request.user != join_request.chat_group.admin:
         raise Http404()
 
-    if request.method =="POST":
+    if request.method == "POST":
         if action == "accept":
             join_request.status = "accepted"
-            join_request.chat_group.members.add(join_request.user)
-            join_request.chat_group.join_requests.remove(join_request)
+            join_request.chat_group.members.add(join_request.member)  # Thêm thành viên vào nhóm
         elif action == "reject":
             join_request.status = "rejected"
-            join_request.chat_group.join_requests.remove(join_request)
+        
+        join_request.save()  # Lưu trạng thái mới
+        join_request.delete()  # Xóa yêu cầu sau khi xử lý
 
     
         join_request.save()

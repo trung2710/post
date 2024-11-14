@@ -61,7 +61,7 @@ def post_create_view(request):
             post.author=request.user
             #luu vao csdl
             post.save()
-            #form.save_m2m()
+            form.save_m2m()
             return redirect('login')
     return render(request, 'aposts/post_create.html', {'form': form})
 #ham xoa 1 bai post
@@ -91,7 +91,7 @@ def post_edit_view(request, pk):
         if form.is_valid():
             # Kiểm tra nếu người dùng chọn xóa ảnh
             if form.cleaned_data['remove_image']:
-                post.image = None  # Gỡ ảnh khỏi bài đăng
+                post.file = None  # Gỡ ảnh khỏi bài đăng
             form.save()
             messages.success(request, "Post updated")
             return redirect('login')

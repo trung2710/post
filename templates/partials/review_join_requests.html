@@ -3,17 +3,19 @@
 {% block content %}
 <h2>Yêu cầu tham gia nhóm: {{ chat_group.group_name }}</h2>
 
-{% if chat_group.join_requests.all %}
+{% if join_requests.all %}
     <ul>
-        {% for request in chat_group.join_requests.all %}
+        {% for request in join_requests.all %}
             {% if request.status == 'pending' %}{% endif %}
             <li>
-                {{ request.user.username }} muốn tham gia nhóm
-                <form method="post" style="display:inline;">
+                {{ request.member.username }} muốn tham gia nhóm
+                <form method="post" action="{% url 'handle_join_request' request.request_name 'accept' %}" style="display:inline;">
                     {% csrf_token %}
-                    <input type="hidden" name="request_id" value="{{ request.request_name }}">
-                    <button type="submit" name="action" value="accept">Chấp nhận</button>
-                    <button type="submit" name="action" value="reject">Từ chối</button>
+                    <button type="submit">Chấp nhận</button>
+                </form>
+                <form method="post" action="{% url 'handle_join_request' request.request_name 'reject' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">Từ chối</button>
                 </form>
             </li>
         {% endfor %}

@@ -14,10 +14,7 @@ class Post(models.Model):
     #nguoi tao ra hinh anh
     #artist= models.CharField(max_length=500, null=True, blank=True)
     #url=models.CharField(max_length=500, null=True, blank=True)
-    image=models.ImageField(upload_to='imagepost/' ,null=True, blank=True)
     file=models.FileField(upload_to='filepost/' ,null=True, blank=True)
-    video=models.FileField(upload_to='videopost/', null=True, blank=True)
-    audio=models.FileField(upload_to='audiopost/', null=True, blank=True)
     #image=models.URLField(max_length=500)
     likes=models.ManyToManyField(User,related_name='likeposts', through='LikedPost' )
     body=models.TextField()
@@ -32,18 +29,18 @@ class Post(models.Model):
     @property
     def ImageUrl(self):
         try:
-            url=self.image.url
-        except:
-            url=''
-        return url
-    
-    @property
-    def FileUrl(self):
-        try:
             url=self.file.url
         except:
             url=''
         return url
+    
+    
+    @property
+    def file_type(self):
+        # Trả về phần mở rộng của file (vd: 'jpg', 'pdf', 'mp4')
+        name, extension = self.file.name.rsplit('.', 1)
+        return extension.lower()
+    
     #cac bai dang se duoc sap xep theo thu tu thoi gian
     class Meta:
         ordering= ['-created']

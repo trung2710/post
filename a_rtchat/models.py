@@ -28,7 +28,7 @@ class GroupMessage(models.Model):
         ordering = ['-created']
 
 class JoinRequest(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="join_requests")
+    member = models.ForeignKey(User, on_delete=models.CASCADE, related_name="join_requests")
     chat_group = models.ForeignKey(ChatGroup, on_delete=models.CASCADE, related_name="join_requests")
     status = models.CharField(max_length=10, choices=[("pending", "Pending"), ("accepted", "Accepted"), ("rejected", "Rejected")], default="pending")
     created = models.DateTimeField(auto_now_add=True)

@@ -5,7 +5,37 @@
         {% comment %} <div class="text-sm text-gray-400 truncate">flickr<a href="{{post.url}}" class="hover:underline ml-1" target="blank">{{post.artist}}</a></div> {% endcomment %}
     </div>
     <figure>
-        <a href="{% url 'post' post.id %}"><img class="w-full" src="{{post.ImageUrl}}"></a>
+        <a href="{% url 'post' post.id %}">
+        {% if post.ImageUrl %}
+            {% if post.file_type == 'jpg' or post.file_type == 'png' or post.file_type == 'gif' %}
+                <!-- Hiển thị file ảnh -->
+                <img class="w-full" src="{{post.ImageUrl}}">
+                
+
+            {% elif post.file_type == 'pdf' %}
+                <!-- Hiển thị file PDF bằng iframe -->
+                <iframe src="{{ post.ImageUrl }}" width="100%" height="600px"></iframe>
+
+            {% elif post.file_type == 'mp4' or post.file_type == 'webm' %}
+                <!-- Hiển thị file video -->
+                <video width="320" height="240" controls class="w-full" preload="metadata">
+                    <source src="{{ post.ImageUrl }}" type="video/{{ post.file_type }}">
+                    Your browser does not support the video tag.
+                </video>
+
+            {% elif post.file_type == 'mp3' or post.file_type == 'wav' %}
+                <!-- Hiển thị file âm thanh -->
+                <audio controls>
+                    <source src="{{ post.ImageUrl }}" type="audio/{{ post.file_type }}">
+                    Your browser does not support the audio element.
+                </audio>
+
+            {% else %}
+                <!-- Hiển thị liên kết tải về cho các loại file khác -->
+                <a href="{{ post.ImageUrl }}" download>{{post.ImageUrl}}</a>
+            {% endif %}
+        {% endif %}
+        </a>
     </figure>
     <div class="p-4 pb-2">
         {% if post.author %}
