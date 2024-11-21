@@ -14,4 +14,6 @@ urlpatterns = [
     path('chat/request_join/<str:chatroom_name>/', views.chat_view, name='request_join_chatroom'),
     path('chat/review_requests/<str:chatroom_name>/', views.review_join_requests, name='review_join_requests'),
     path('chat/handle_request/<request_id>/<action>/', views.handle_join_request, name='handle_join_request'),
+    #gui file trong doan chat
+    path('chat/fileupload/<chatroom_name>/', views.chat_file_upload, name="chat-file-upload"),
 ]

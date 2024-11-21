@@ -1,9 +1,11 @@
 from django.shortcuts import render, get_object_or_404,redirect
 from .models import *
 from django.contrib.auth.decorators import login_required
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from .forms import *
+from asgiref.sync import async_to_sync
 from django.contrib import messages
+from channels.layers import get_channel_layer
 
 @login_required
 def chat_view(request, chatroom_name='public-chat'):
@@ -24,9 +26,10 @@ def chat_view(request, chatroom_name='public-chat'):
         if request.user not in chat_group.members.all():
             # chat_group.members.add(request.user)
             # Nếu chưa là thành viên, kiểm tra nếu đã có yêu cầu tham gia hay chưa
-            join_request, created = JoinRequest.objects.get_or_create(user=request.user, chat_group=chat_group)
-            if join_request not in chat_group.join_requests.all():
-                chat_group.join_requests.add(join_request)
+            join_request, created = JoinRequest.objects.get_or_create(member=request.user, chat_group=chat_group)
+            join_request.status='pending'
+            join_request.save()
+
             if created:
                 # Nếu yêu cầu mới được tạo, hiển thị thông báo xác nhận
                 message = "Yêu cầu tham gia của bạn đã được gửi và đang chờ admin duyệt."
@@ -62,7 +65,7 @@ def chat_view(request, chatroom_name='public-chat'):
     return render(request, 'a_rtchat/chat.html', context)
 
 
-#ham nhan hoac tao phong tro chuyen 
+#ham nhan hoac tao phong tro chuyen cá nhân 1-1 giữa 2 người.
 @login_required
 def get_or_create_chatroom(request, username=None):
     
@@ -91,6 +94,7 @@ def get_or_create_chatroom(request, username=None):
         chatroom.members.add(request.user, other_user)
     return redirect('chatroom', chatroom.group_name)
 
+#tạo 1 groupchat nhiều thành viên.
 @login_required
 def create_groupchat(request):
     form = NewGroupForm()
@@ -224,6 +228,7 @@ def review_join_requests(request, chatroom_name):
     }
     return render(request, 'partials/review_join_requests.html', context)
 
+#admin duyet cac yeu cau tham gia nhom cua cac user(đồng ý/ từ chối yêu cầu tham gia)
 @login_required
 def handle_join_request(request, request_id, action):
     join_request = get_object_or_404(JoinRequest, request_name=request_id)
@@ -242,6 +247,27 @@ def handle_join_request(request, request_id, action):
         join_request.save()  # Lưu trạng thái mới
         join_request.delete()  # Xóa yêu cầu sau khi xử lý
 
-    
-        join_request.save()
     return redirect('review_join_requests', chatroom_name=join_request.chat_group.group_name)
+
+#gửi tin nhắn dạng file trong đoạn chat.
+@login_required
+def chat_file_upload(request, chatroom_name):
+    chat_group=get_object_or_404(ChatGroup, group_name=chatroom_name)
+
+    if request.htmx and request.FILES:
+        file=request.FILES['file']
+        message=GroupMessage.objects.create(
+            file=file,
+            author=request.user,
+            group=chat_group,
+        )
+        channel_layer = get_channel_layer()
+        event={
+            'type': 'message_handler',
+            'message_id': message.id,
+        }
+        async_to_sync(channel_layer.group_send)(
+            chatroom_name, event
+        )
+        return HttpResponse()
+    
