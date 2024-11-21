@@ -64,13 +64,13 @@
                         <li><a href="{% url 'profile' %}">My Profile</a></li>
                         <li><a href="{% url 'profile-edit' %}">Edit Profile</a></li>
                         <li><a href="{% url 'new-groupchat' %}">Create Chat</a></li>
-                        <li><a href="{% url 'account_logout' %}">Log Out</a></li>
+                        <li><a href="{% url 'account_logout' %}">Sign Out</a></li>
                     </ul>
                 </div>
             </li>
             {% else %}
             <!--con nguoi dung chua dang nhap thi hien nut nay-->
-            <li><a href="{% url 'account_login' %}">Log In</a></li>
+            <li><a href="{% url 'account_login' %}">Sign In</a></li>
             <li><a href="{% url 'account_signup' %}">Sign Up</a></li>
             {% endif %}
         </ul>

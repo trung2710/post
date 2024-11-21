@@ -202,8 +202,27 @@ def chatroom_leave_view(request, chatroom_name):
         raise Http404()
 
     if request.method == "POST":
-        chat_group.members.remove(request.user)
-        messages.success(request, 'You have left the chat')
+        if request.user == chat_group.admin:
+            # Lấy danh sách các thành viên khác (ngoại trừ admin hiện tại)
+            other_members = chat_group.members.exclude(id=request.user.id)
+            
+            #xem danh sach co trong khong
+            if other_members.exists():
+                new_admin=other_members.first()
+                chat_group.admin=new_admin
+                chat_group.save()
+                messages.success(request, f'new admin {new_admin.username}')
+            #neu group trong
+            else :
+                #xoa nhom chat
+                chat_group.delete()
+                messages.success(request,"The group has been deleted because there are no more members")
+            chat_group.members.remove(request.user)
+        else:
+            chat_group.members.remove(request.user)
+            messages.success(request, 'You have left the chat')
+
+        
         return redirect('login')
     
     return render(request, 'partials/chatroom_leave.html', {'chat_group':chat_group})
